@@ -86,6 +86,7 @@ class App:
 			return False
 		return ((self.mousePos[0]-gridPos[0])//cellSize, (self.mousePos[1]-gridPos[1])//cellSize)	# we divide it by cellSize to get particular position
 
+
 	
 	def loadButtons(self):
 		self.playingButtons.append(Button(20, 40, 100, 40))		
