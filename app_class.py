@@ -1,5 +1,6 @@
 import pygame, sys
 from settings import *
+from buttonClass import *
 
 
 class App:
@@ -11,6 +12,10 @@ class App:
 		self.selected = None
 		self.mousePos = None
 		self.state = "playing"
+		self.playingButtons = []
+		self.menuButtons = []
+		self.endButtons = []
+		self.loadButtons()
 
 	def run(self):
 		while self.running:
@@ -40,12 +45,21 @@ class App:
 
 	def playing_update(self):
 		self.mousePos = pygame.mouse.get_pos()
+		for button in self.playingButtons:
+			button.update(self.mousePos)
 
 
 	def playing_draw(self):
 		self.window.fill(WHITE)
+
+		for button in self.playingButtons:
+			button.draw(self.window)
+
 		if self.selected:
 			self.drawSelection(self.window, self.selected)
+
+		self.drawnumbers(window)	
+			
 		self.drawGrid(self.window)
 		pygame.display.update()		
 
@@ -61,12 +75,8 @@ class App:
 	def drawGrid(self, window):
 		pygame.draw.rect(window, BLACK, (gridPos[0], gridPos[1], WIDTH-150, HEIGHT-150), 2)
 		for x in range(9):
-			if x%3 != 0:
-				pygame.draw.line(window, BLACK, (gridPos[0]+(x*cellSize), gridPos[1]), (gridPos[0]+(x*cellSize), gridPos[1]+450))
-				pygame.draw.line(window, BLACK, (gridPos[0], gridPos[1]+(x*cellSize)), (gridPos[0]+450, gridPos[1]+(x*cellSize)))			
-			else:
-				pygame.draw.line(window, BLACK, (gridPos[0]+(x*cellSize), gridPos[1]), (gridPos[0]+(x*cellSize), gridPos[1]+450), 2)
-				pygame.draw.line(window, BLACK, (gridPos[0], gridPos[1]+(x*cellSize)), (gridPos[0]+450, gridPos[1]+(x*cellSize)), 2)			
+			pygame.draw.line(window, BLACK, (gridPos[0]+(x*cellSize), gridPos[1]), (gridPos[0]+(x*cellSize), gridPos[1]+450), 2 if x%3 == 0 else 1)
+			pygame.draw.line(window, BLACK, (gridPos[0], gridPos[1]+(x*cellSize)), (gridPos[0]+450, gridPos[1]+(x*cellSize)), 2 if x%3 == 0 else 1)			
 
 
 	def mouseOnGrid(self):
@@ -75,3 +85,8 @@ class App:
 		if self.mousePos[0] > gridPos[0]+gridSize or self.mousePos[1] > gridPos[1]+gridSize:
 			return False
 		return ((self.mousePos[0]-gridPos[0])//cellSize, (self.mousePos[1]-gridPos[1])//cellSize)	# we divide it by cellSize to get particular position
+
+	
+	def loadButtons(self):
+		self.playingButtons.append(Button(20, 40, 100, 40))		
+
