@@ -8,13 +8,14 @@ class App:
 		pygame.init()
 		self.window = pygame.display.set_mode((WIDTH, HEIGHT))
 		self.running = True
-		self.grid = testBoard
+		self.grid = testBoard2
 		self.selected = None
 		self.mousePos = None
 		self.state = "playing"
 		self.playingButtons = []
 		self.menuButtons = []
 		self.endButtons = []
+		self.font = pygame.font.SysFont("arial", cellSize//2)
 		self.loadButtons()
 
 	def run(self):
@@ -58,7 +59,7 @@ class App:
 		if self.selected:
 			self.drawSelection(self.window, self.selected)
 
-		self.drawnumbers(window)	
+		self.drawNumbers(self.window)	
 			
 		self.drawGrid(self.window)
 		pygame.display.update()		
@@ -66,7 +67,14 @@ class App:
 	
 
 ##### HELPER FUNCTIONS #####
-
+	
+	def drawNumbers(self, window):
+		for yinx, row in enumerate(self.grid):
+			for xindx, num in enumerate(row):
+				if num != 0:
+					pos =[xindx*cellSize+gridPos[0], yinx*cellSize+gridPos[1]]
+					self.textToScreen(window, str(num), pos)
+	
 
 	def drawSelection(self, window, pos):
 		pygame.draw.rect(window, LIGHTBLUE, (pos[0]*cellSize+gridPos[0], pos[1]*cellSize+gridPos[1], cellSize, cellSize))	
@@ -86,8 +94,15 @@ class App:
 			return False
 		return ((self.mousePos[0]-gridPos[0])//cellSize, (self.mousePos[1]-gridPos[1])//cellSize)	# we divide it by cellSize to get particular position
 
-
 	
 	def loadButtons(self):
 		self.playingButtons.append(Button(20, 40, 100, 40))		
 
+
+	def textToScreen(self, window, text, pos):
+		font = self.font.render(text, False, BLACK)	
+		fontWidth = font.get_width()
+		fontHeight = font.get_height()
+		pos[0]+=(cellSize-fontWidth)//2
+		pos[1]+=(cellSize-fontHeight)//2
+		window.blit(font, pos)
